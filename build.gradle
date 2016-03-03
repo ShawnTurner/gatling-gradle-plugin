@@ -1,0 +1,47 @@
+apply plugin: 'groovy'
+
+group = 'com.commercehub'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+}
+
+jar {
+    manifest {
+        if (version != null) {
+            attributes 'implementation-Title': 'Gradle',
+                    'Implementation-Version': version
+        }
+        [
+                "BUILD_ID"     : "Build-Id",
+                "BUILD_NUMBER" : "Build-Number",
+                "HG_COMMIT"    : "HG-Commit",
+                "HG_BRANCH"    : "HG-Branch",
+                "APP_VERSION"  : "App-Version",
+                "KICKED_OFF_BY": "Kicked-Off-By",
+        ].each { envVar, attrName ->
+            def envVal = System.getProperty(envVar)
+            if (envVal) {
+                attributes([(attrName): envVal])
+            } else {
+                println("Couldn't locate a value for ${envVar}.")
+            }
+        }
+    }
+}
+
+apply plugin: 'codenarc'
+
+codenarc {
+    toolVersion = '0.22'
+}
+codenarcMain {
+    configFile = rootProject.file('gradle/codenarc/codenarc.groovy')
+}
+codenarcTest {
+    configFile = rootProject.file('gradle/codenarc/codenarc.groovy')
+}
