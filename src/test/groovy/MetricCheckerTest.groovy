@@ -16,4 +16,26 @@ class MetricCheckerTest extends GroovyTestCase {
         assert filteredList.size() == 5
         assert !filteredList.contains(null)
     }
+
+    void testBuildMetricPath() {
+        final String PREFIX = "foo"
+        final String SCENARIO = "bar"
+        final String METRIC = "blah"
+        final String EXPECTED_METRIC_PATH = "gatling.${PREFIX}.${SCENARIO}.${METRIC}.all.mean"
+
+        String builtMetricPath = MetricChecker.buildMetricPath(PREFIX, SCENARIO, METRIC)
+
+        assert builtMetricPath == EXPECTED_METRIC_PATH
+    }
+
+    void testBuildMetricPathNoPrefix() {
+        final String PREFIX = null
+        final String SCENARIO = "foo"
+        final String METRIC = "blah"
+        final String EXPECTED_METRIC_PATH = "gatling.${SCENARIO}.${METRIC}.all.mean"
+
+        String builtMetricPath = MetricChecker.buildMetricPath(PREFIX, SCENARIO, METRIC)
+
+        assert builtMetricPath == EXPECTED_METRIC_PATH
+    }
 }

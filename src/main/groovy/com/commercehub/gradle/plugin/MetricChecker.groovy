@@ -114,14 +114,15 @@ class MetricChecker {
      * @param metricName the metric to check (case sensitive with underscores instead of spaces ie 'Get_by_Organization_id')
      * @param numberOfDays the number of days to go back
      */
-    static void checkPreviousDays(String baseUrl, String scenario, String metricName, int numberOfDays) {
+    static void checkPreviousDays(String baseUrl, String graphitePrefix, String scenario,
+                                  String metricName, int numberOfDays) {
         log.info("Checking the past ${numberOfDays} days.")
 
         final long DAYS_IN_MS = numberOfDays * 1000 * 60 * 60 * 24
         final Date START_DATE = new Date(System.currentTimeMillis() - DAYS_IN_MS).clearTime()
 
         String apiPrefix = '/render/?target='
-        String metric = "gatling.${scenario}.${metricName}.all.mean"
+        String metric = buildMetricPath(graphitePrefix, scenario, metricName)
         String format = "&format=json"
         String from = "&from=${new SimpleDateFormat("HH:mm_yyyyMMdd", Locale.US).format(START_DATE)}"
 
@@ -167,6 +168,24 @@ class MetricChecker {
         } else {
             log.warn("No datapoints found for $metricName")
         }
+    }
+
+    static String buildMetricPath(String prefix, String scenario, String metricName) {
+        StringBuilder stringBuilder = new StringBuilder()
+
+        stringBuilder.append("gatling.")
+
+        if (prefix != null) {
+            stringBuilder.append(prefix)
+            stringBuilder.append(".")
+        }
+
+        stringBuilder.append(scenario)
+        stringBuilder.append(".")
+        stringBuilder.append(metricName)
+        stringBuilder.append(".all.mean")
+
+        return stringBuilder.toString()
     }
 
     /**

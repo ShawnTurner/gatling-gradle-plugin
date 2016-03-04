@@ -101,8 +101,8 @@ class GatlingPlugin implements Plugin<Project> {
                 log.debug("Checking metric '${it.toString()}'.")
 
                 try {
-                    MetricChecker.checkPreviousDays(getBaseUrl(), scenario.toLowerCase(), it.toString(),
-                            getNumberOfDaysToCheck())
+                    MetricChecker.checkPreviousDays(getBaseUrl(), getGraphiteMetricPrefix(), scenario.toLowerCase(),
+                            it.toString(), getNumberOfDaysToCheck())
 
                 } catch (GatlingGradlePluginException e) {
                     errorMessage += e.getMessage()
@@ -166,5 +166,9 @@ class GatlingPlugin implements Plugin<Project> {
 
     String getGatlingVersion() {
         return project.gatlingTest.gatlingVersion
+    }
+
+    String getGraphiteMetricPrefix() {
+        return project.gatlingTest.graphiteMetricPrefix
     }
 }

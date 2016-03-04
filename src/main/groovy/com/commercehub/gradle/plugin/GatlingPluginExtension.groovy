@@ -67,4 +67,9 @@ class GatlingPluginExtension {
      * Set Gatling conf file location
      */
     String gatlingConfFile = "${project.rootDir.absolutePath}/resources/gatling.conf"
+
+    /**
+     * Set the the prefix for the published graphite metrics
+     */
+    String graphiteMetricPrefix = null
 }
