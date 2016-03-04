@@ -15,11 +15,8 @@ class AverageCalculator {
      * @return average of the given times
      */
     static calculateAverageResponseTime(def responseTimes) {
-        log.debug("Filtering out outliers")
-        def filteredResponseTimes = filterOutliers(responseTimes);
-
         log.debug("Calculating average of: ${responseTimes}")
-        def averageResponseTime = filteredResponseTimes.sum() / filteredResponseTimes.size()
+        def averageResponseTime = responseTimes.sum() / responseTimes.size()
 
         log.debug("Returning average: ${averageResponseTime}")
         return averageResponseTime
