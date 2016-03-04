@@ -97,3 +97,4 @@ Running the following command will execute the scenario:
 * `gatlingBodiesFolder` : The directory containing gatling bodies files. Defaults to $projectRoot/bodies
 * `gatlingReportsFolder` : The directory where gatling reports will be dropped. Defaults to $projectRoot/reports
 * `gatlingConfFile` : The gatling conf file to use. Defaults to $projectRoot/resources/gatling.conf
+* `graphiteMetricPrefix` : prefix to add to the graphite metric
