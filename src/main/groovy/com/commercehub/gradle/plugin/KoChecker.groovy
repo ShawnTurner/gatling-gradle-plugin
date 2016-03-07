@@ -10,8 +10,8 @@ import groovy.util.logging.Slf4j
 class KoChecker {
     private static final String KO_REGEX = /:\sKO\s/
 
-    static void checkForKos(int koThreshold) {
-        String gatlingLog = new File("build/gatling.log").getText()
+    void checkForKos(int koThreshold, File gatlingLogFile) {
+        String gatlingLog = gatlingLogFile.getText()
 
         int matches = gatlingLog.findAll(KO_REGEX).size()
 

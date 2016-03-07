@@ -32,7 +32,9 @@ class MetricChecker {
      * @param untilDate end time
      */
     static void detectFailedRequestQualityGate(int koThreshold) {
-        KoChecker.checkForKos(koThreshold)
+        File gatlingLogFile = new File('build/gatling.log')
+
+        new KoChecker().checkForKos(koThreshold, gatlingLogFile)
     }
 
     /**
