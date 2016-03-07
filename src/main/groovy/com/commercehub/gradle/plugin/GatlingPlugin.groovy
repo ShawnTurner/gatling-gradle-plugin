@@ -116,8 +116,7 @@ class GatlingPlugin implements Plugin<Project> {
             log.debug("Until date: ${until}")
 
             try {
-                MetricChecker.detectFailedRequestQualityGate(getBaseUrl(), graphiteMetricPrefix, scenario.toLowerCase(),
-                        from, until, getKoThreshold())
+                MetricChecker.detectFailedRequestQualityGate(getKoThreshold())
             } catch (GatlingGradlePluginException e) {
                 errorMessage += e.getMessage()
             }
