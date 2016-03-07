@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat
  */
 @Slf4j
 class MetricChecker {
+    private static final String GATLING_PREFIX = "gatling."
 
     /**
      * Return JSON from the given URL
@@ -30,10 +31,10 @@ class MetricChecker {
      * @param fromDate start time
      * @param untilDate end time
      */
-    static void detectFailedRequestQualityGate(String baseUrl, String scenario, Date fromDate, Date untilDate,
-                                               int koThreshold) {
+    static void detectFailedRequestQualityGate(String baseUrl, String metricPrefix, String scenario, Date fromDate,
+                                               Date untilDate, int koThreshold) {
         // Specific metric key assumed. Avoid using reg expression syntax.
-        String metric = "gatling.${scenario}.allRequests.ko.count"
+        String metric = buildKoMetricPath(metricPrefix, scenario)
 
         // Graphite date format
         String from = new SimpleDateFormat("HH:mm_yyyyMMdd", Locale.US).format(fromDate)
@@ -173,7 +174,7 @@ class MetricChecker {
     static String buildMetricPath(String prefix, String scenario, String metricName) {
         StringBuilder stringBuilder = new StringBuilder()
 
-        stringBuilder.append("gatling.")
+        stringBuilder.append(GATLING_PREFIX)
 
         if (prefix != null) {
             stringBuilder.append(prefix)
@@ -212,5 +213,20 @@ class MetricChecker {
         log.debug("Filtered out ${nullCount} nulls.")
 
         return meanTimes
+    }
+
+    private static String buildKoMetricPath(String metricPrefix, String scenario) {
+        StringBuilder stringBuilder = new StringBuilder()
+        stringBuilder.append(GATLING_PREFIX)
+
+        if (metricPrefix != null) {
+            stringBuilder.append(metricPrefix)
+            stringBuilder.append(".")
+        }
+
+        stringBuilder.append(scenario)
+        stringBuilder.append(".allRequests.ko.count")
+
+        return stringBuilder.toString()
     }
 }
