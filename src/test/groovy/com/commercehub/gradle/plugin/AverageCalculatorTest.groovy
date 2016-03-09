@@ -1,4 +1,4 @@
-import com.commercehub.gradle.plugin.AverageCalculator
+package com.commercehub.gradle.plugin
 
 /**
  * Created by bmanley on 11/9/15.

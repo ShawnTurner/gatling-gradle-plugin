@@ -1,4 +1,4 @@
-import com.commercehub.gradle.plugin.KoChecker
+package com.commercehub.gradle.plugin
 
 /**
  * Created by bmanley on 3/7/16.

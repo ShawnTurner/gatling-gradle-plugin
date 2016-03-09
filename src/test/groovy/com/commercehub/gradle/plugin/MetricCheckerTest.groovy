@@ -1,4 +1,5 @@
-import com.commercehub.gradle.plugin.MetricChecker
+package com.commercehub.gradle.plugin
+
 
 /**
  * Created by bmanley on 11/9/15.
