@@ -1,9 +1,11 @@
 package com.commercehub.gradle.plugin
 
+import spock.lang.Specification
+
 /**
  * Created by bmanley on 3/7/16.
  */
-class KoCheckerTest extends GroovyTestCase {
+class KoCheckerSpec extends Specification {
     private static final String TEST_RESPONSE =
             '''>>>>>>>>>>>>>>>>>>>>>>>>>>
                 Request:
@@ -37,24 +39,30 @@ class KoCheckerTest extends GroovyTestCase {
 
 
     void testCheckForKos() {
+        given:
         final int KO_THRESHOLD = 0
 
         File testFile = new File('test')
         testFile.write(TEST_RESPONSE)
 
-        shouldFail {
-            KO_CHECKER.checkForKos(KO_THRESHOLD, testFile)
-        }
+        when:
+        KO_CHECKER.checkForKos(KO_THRESHOLD, testFile)
+
+        then:
+        thrown GatlingGradlePluginException
     }
 
     void testCheckForKosPass() {
+        given:
         final int KO_THRESHOLD = 1
 
         File testFile = new File('test')
         testFile.write(TEST_RESPONSE)
 
+        when:
         KO_CHECKER.checkForKos(KO_THRESHOLD, testFile)
 
+        then:
         assert testFile.getText() == TEST_RESPONSE
     }
 

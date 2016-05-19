@@ -47,7 +47,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
     }
 
 
-    apply plugin: 'gatling-plugin'
+    apply plugin: 'gatling'
 
     sourceSets {
         test {
