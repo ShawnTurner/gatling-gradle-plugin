@@ -9,7 +9,8 @@ import org.gradle.api.tasks.TaskAction
  * Created by bmanley on 11/16/15.
  */
 class GatlingTask extends DefaultTask {
-    private final GatlingPluginExtension extension = project.extensions[GatlingPlugin.GATLING_EXTENSION_NAME]
+    private final GatlingPluginExtension extension =
+            project.extensions[GatlingPlugin.GATLING_EXTENSION_NAME] as GatlingPluginExtension
 
     /**
      * Gatling simulations to run
@@ -49,7 +50,8 @@ class GatlingTask extends DefaultTask {
         failBuild ?: extension.failBuild
     }
 
-    GatlingTaskMetricsConfig metrics = new GatlingTaskMetricsConfig()
+    GatlingTaskMetricsConfig metrics = new GatlingTaskMetricsConfig(extension)
+
 
     @SuppressWarnings('ConfusingMethodName')
     def metrics(Closure closure) {
@@ -71,6 +73,9 @@ class GatlingTask extends DefaultTask {
     }
 
     private void runGatling() {
+        def gatlingRuntimeClasspath = getGatlingRuntimeClasspath()
+        def extension = this.extension
+        def gatlingSimulation = this.gatlingSimulation
         project.javaexec {
             standardInput = System.in
             standardOutput = new File(project.buildDir, 'gatling.log').newOutputStream()
@@ -92,27 +97,26 @@ class GatlingTask extends DefaultTask {
             try {
                 MetricChecker.detectFailedRequestQualityGate(getKoThreshold())
             } catch (GatlingGradlePluginException e) {
-                handleFailure("", e)
+                handleFailure("FAILED KO Check", e)
             }
         }
     }
 
     private void checkMetrics() {
         metrics.metricsToCheck.each { metricName ->
-            project.logger.debug("Checking metric '${it.toString()}'.")
+            project.logger.debug("Checking metric '${metricName.toString()}'.")
 
             try {
                 MetricChecker.checkPreviousDays(metrics.graphiteUrl, metrics.metricPrefix, gatlingSimulation,
                         metricName, metrics.daysToCheck)
-
             } catch (GatlingGradlePluginException e) {
-                handleFailure("", e)
+                handleFailure("FAILED Metric Check ($metricName)", e)
             }
         }
     }
 
-    private getGatlingRuntimeClasspath() {
-        return sourceSet.output + sourceSet.runtimeClasspath
+    private def getGatlingRuntimeClasspath() {
+        return getSourceSet().output + getSourceSet().runtimeClasspath
     }
 
     private void handleFailure(message, exception) {
@@ -123,6 +127,11 @@ class GatlingTask extends DefaultTask {
     }
 
     class GatlingTaskMetricsConfig {
+        private final GatlingPluginExtension extension
+
+        GatlingTaskMetricsConfig(GatlingPluginExtension extension) {
+            this.extension = extension
+        }
 
         def metricsToCheck = []
 
