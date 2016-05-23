@@ -115,7 +115,7 @@ class GatlingTask extends DefaultTask {
         }
     }
 
-    private def getGatlingRuntimeClasspath() {
+    private getGatlingRuntimeClasspath() {
         return getSourceSet().output + getSourceSet().runtimeClasspath
     }
 

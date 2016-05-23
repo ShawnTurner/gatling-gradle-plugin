@@ -1,11 +1,8 @@
 package com.commercehub.gradle.plugin
 
-import groovy.util.logging.Slf4j
-
 /**
 *  Created by bmanley on 11/9/15.
 */
-@Slf4j
 class AverageCalculator {
 
     /**
@@ -15,10 +12,8 @@ class AverageCalculator {
      * @return average of the given times
      */
     static calculateAverageResponseTime(def responseTimes) {
-        log.debug("Calculating average of: ${responseTimes}")
         def averageResponseTime = responseTimes.sum() / responseTimes.size()
 
-        log.debug("Returning average: ${averageResponseTime}")
         return averageResponseTime
     }
 
@@ -32,8 +27,6 @@ class AverageCalculator {
     static calculateStandardDev(def responseTimes, def average) {
         def devSquaredList = []
 
-        log.debug("Calculating standard deviation of: ${responseTimes}")
-
         for (def time: responseTimes) {
             def deviation = time - average
             def devSquared = deviation * deviation
@@ -45,7 +38,6 @@ class AverageCalculator {
 
         // stdDev = (variance ^ (1/2))
         def stdDev = Math.sqrt(variance)
-        log.debug("Returning standard deviation: ${stdDev}")
 
         return stdDev
     }
@@ -58,23 +50,17 @@ class AverageCalculator {
      * @return list of response times without outliers
      */
     static filterOutliers(def responseTimes) {
-        log.debug("Filtering out outliers for: ${responseTimes}")
-
         def average = calculateAverageResponseTime(responseTimes)
         def standardDev = calculateStandardDev(responseTimes, average)
 
         def low = average - 2 * standardDev
-        log.debug("Using floor: ${low}")
         def high = average + 2 * standardDev
-        log.debug("Using ceiling: ${high}")
 
         def returnList = []
 
         for (def time: responseTimes) {
             if (time > low && time < high) {
                 returnList.add(time)
-            } else {
-                log.debug("Filtered out time: ${time}")
             }
         }
 
