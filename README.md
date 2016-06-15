@@ -94,8 +94,8 @@ level to provide global defaults.
 
 * `graphiteUrl` : The graphite base url.
 * `graphiteMetricPrefix` : prefix to add to the graphite metric.
-* `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with.
- `gatling.<graphiteMetricPrefix>.<gatlingSimulation(lowercase)>.
+* `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with. 
+ `gatling.<graphiteMetricPrefix>.<gatlingSimulation(lowercase)>`.
 * `numberOfDaysToCheck` : Number of previous days to compare the current run to. If this value is 0, no check will occur.
  Must be a positive integer. Defaults to 0.
 * `degradationTolerance` : Percentage threshold for which the current average response times for a metric cannot exceed
