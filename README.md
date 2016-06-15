@@ -14,7 +14,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
 
     buildscript {
         repositories {
-            mavenCentral()
+            jcenter()
         }
 
         dependencies {
@@ -30,7 +30,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
     }
 
     repositories {
-        mavenCentral()
+        jcenter()
     }
 
     ext {
@@ -48,53 +48,60 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
 
 
     apply plugin: 'gatling'
-
-    sourceSets {
-        test {
-            scala {
-                srcDirs 'simulations'
-            }
-            resources {
-                srcDirs 'resources'
-            }
+    
+    gatling {
+        checkForKOs = true
+        koThreshold = 0
+    
+        metrics {
+            graphiteUrl = "http://my.graphite.server.com"
+            metricPrefix = 'my-namespace'
+        }
+    }
+    
+    import com.commercehub.gradle.plugin.GatlingTask
+    task loadTest(type: GatlingTask, dependsOn: ['testClasses']) {
+        gatlingSimulation = 'MyGatlingTest'
+        metrics {
+            metricsToCheck = ['myapp:pageresponsetime']
+            daysToCheck = 5
+            degradationTolerance = 0.50
+        }
+        jvmOptions {
+            minHeapSize = "1024m"
+            maxHeapSize = "1024m"
+            systemProperty 'some.custom.setting', 'value'
         }
     }
 
-    gatlingTest {
-        gatlingVersion = '2.2.0-M3'
 
-        checkForKOs = true
-        koThreshold = 10
+Running the following command will execute the gatling task defined above:
 
-        numberOfDaysToCheck = 5
-
-        graphiteUrl = "http://my.graphite.url.com"
-
-        gatlingSimulation = ['MyAwesomeSimulation', 'MyCoolSimulation']
-        metricsToCheck = ['Request_Name_1', 'Request_Name_2']
-        gatlingDataFolder = 'data'
-        gatlingBodiesFolder = 'bodies'
-        gatlingReportsFolder = 'reports'
-
-        gatlingConfFile = 'resources/gatling.conf'
-    }
-
-Running the following command will execute the scenario:
-
-    gradle(w) gatlingTest
+    gradle(w) loadTest
 
 ## GatlingTest Task Configuration
 
-* `gatlingVersion` : Set the version of gatling to use. Defaults to 2.2.0-M3.
+All task paramters except for sourceSet, gatlingSimulation and jvmOptions can be configured at the 'gatling' extension
+level to provide global defaults.
+
+* `sourceSet` : Project source set containing gatling simulation to run. Defaults to project.sourceSets.test.
+* `gatlingSimulation` : The list of scenarios to run.
 * `checkForKOs` : Set whether or not to check for KOed requests. Defaults to true.
 * `koThreshold` : Number of KOs that will be allowed before the build is considered failed. Defaults to 0.
+* `gatlingDataDir` : The directory containing gatling data files. Defaults to $projectRoot/data.
+* `gatlingBodiesDir` : The directory containing gatling bodies files. Defaults to $projectRoot/user-files/request-bodies.
+* `gatlingReportsDir` : The directory where gatling reports will be dropped. Defaults to $projectRoot/build/reports.
+* `gatlingConfFile` : The gatling conf file to use. Defaults to $projectRoot/resources/gatling.conf.
+* `metrics` : Nested configuration closure configuring performance metrics checks.
+* `jvmOptions` : Nested configuration of type [JavaForkOptions](https://docs.gradle.org/current/javadoc/org/gradle/process/JavaForkOptions.html)
+
+## Configuring checking of performance metrics in graphite
+
+* `graphiteUrl` : The graphite base url.
+* `graphiteMetricPrefix` : prefix to add to the graphite metric.
+* `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with.
+ `gatling.<graphiteMetricPrefix>.<gatlingSimulation(lowercase)>.
 * `numberOfDaysToCheck` : Number of previous days to compare the current run to. If this value is 0, no check will occur.
  Must be a positive integer. Defaults to 0.
-* `graphiteUrl` : The graphite base url.
-* `gatlingSimulation` : The list of scenarios to run.
-* `metricsToCheck` : The list of graphite metrics to check.
-* `gatlingDataFolder` : The directory containing gatling data files. Defaults to $projectRoot/data
-* `gatlingBodiesFolder` : The directory containing gatling bodies files. Defaults to $projectRoot/bodies
-* `gatlingReportsFolder` : The directory where gatling reports will be dropped. Defaults to $projectRoot/reports
-* `gatlingConfFile` : The gatling conf file to use. Defaults to $projectRoot/resources/gatling.conf
-* `graphiteMetricPrefix` : prefix to add to the graphite metric
+* `degradationTolerance` : Percentage threshold for which the current average response times for a metric cannot exceed
+ historical averages. Defaults to 0.5, for 50%.
