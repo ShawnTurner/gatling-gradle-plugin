@@ -6,7 +6,7 @@ package com.commercehub.gradle.plugin
 class KoChecker {
     private static final String KO_REGEX = /:\sKO\s/
 
-    void checkForKos(int koThreshold, File gatlingLogFile) {
+    static void checkForKos(int koThreshold, File gatlingLogFile) {
         String gatlingLog = gatlingLogFile.getText()
 
         int matches = gatlingLog.findAll(KO_REGEX).size()

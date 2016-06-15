@@ -4,6 +4,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
+import org.gradle.process.JavaForkOptions
+import org.gradle.process.internal.DefaultJavaForkOptions
 
 /**
  * Created by bmanley on 11/16/15.
@@ -47,15 +49,22 @@ class GatlingTask extends DefaultTask {
     Boolean failBuild
 
     boolean getFailBuild() {
-        failBuild ?: extension.failBuild
+        (failBuild != null) ? failBuild : extension.failBuild
     }
 
     GatlingTaskMetricsConfig metrics = new GatlingTaskMetricsConfig(extension)
 
-
     @SuppressWarnings('ConfusingMethodName')
     def metrics(Closure closure) {
         closure.setDelegate this.metrics
+        closure.call()
+    }
+
+    JavaForkOptions jvmOptions = new DefaultJavaForkOptions(project.fileResolver)
+
+    @SuppressWarnings('ConfusingMethodName')
+    def jvmOptions(Closure closure) {
+        closure.setDelegate this.jvmOptions
         closure.call()
     }
 
@@ -76,15 +85,15 @@ class GatlingTask extends DefaultTask {
         def gatlingRuntimeClasspath = getGatlingRuntimeClasspath()
         def extension = this.extension
         def gatlingSimulation = this.gatlingSimulation
+        def gatlingLogFile = new File(project.buildDir, 'gatling.log')
         project.javaexec {
+            jvmOptions.copyTo(delegate)
             standardInput = System.in
-            standardOutput = new File(project.buildDir, 'gatling.log').newOutputStream()
+            standardOutput = gatlingLogFile.newOutputStream()
             main = 'io.gatling.app.Gatling'
             classpath = gatlingRuntimeClasspath
 
-            jvmArgs '-Dgatling.core.directory.binaries=./build/classes/test',
-                    '-Xmx1024M',
-                    '-Xms1024M',
+            jvmArgs "-Dgatling.core.directory.binaries=${sourceSet.output.classesDir}",
                     '-Xss1m'
 
             args '-df', extension.gatlingDataDir
@@ -95,7 +104,7 @@ class GatlingTask extends DefaultTask {
 
         if (checkForKOs) {
             try {
-                MetricChecker.detectFailedRequestQualityGate(getKoThreshold())
+                KoChecker.checkForKos(getKoThreshold(), gatlingLogFile)
             } catch (GatlingGradlePluginException e) {
                 handleFailure("FAILED KO Check", e)
             }
@@ -108,7 +117,7 @@ class GatlingTask extends DefaultTask {
 
             try {
                 MetricChecker.checkPreviousDays(metrics.graphiteUrl, metrics.metricPrefix, gatlingSimulation,
-                        metricName, metrics.daysToCheck)
+                        metricName, metrics.daysToCheck, metrics.degradationTolerance)
             } catch (GatlingGradlePluginException e) {
                 handleFailure("FAILED Metric Check ($metricName)", e)
             }
@@ -119,11 +128,11 @@ class GatlingTask extends DefaultTask {
         return getSourceSet().output + getSourceSet().runtimeClasspath
     }
 
-    private void handleFailure(message, exception) {
-        if (failBuild) {
+    void handleFailure(String message, Throwable exception) {
+        if (getFailBuild()) {
             throw new GradleException(message, exception)
         }
-        project.logger.error(message, exception)
+        project.logger.error(message)
     }
 
     class GatlingTaskMetricsConfig {
@@ -151,6 +160,12 @@ class GatlingTask extends DefaultTask {
 
         int getDaysToCheck() {
             daysToCheck ?: extension.metrics.daysToCheck
+        }
+
+        Number degradationTolerance
+
+        Number getDegradationTolerance() {
+            degradationTolerance ?: extension.metrics.degradationTolerance
         }
     }
 }

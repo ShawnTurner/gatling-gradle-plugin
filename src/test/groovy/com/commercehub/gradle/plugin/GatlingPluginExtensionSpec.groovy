@@ -23,6 +23,7 @@ class GatlingPluginExtensionSpec extends Specification {
                 daysToCheck = 5
                 graphiteUrl = 'http://locahost'
                 metricPrefix = 'foo'
+                degradationTolerance = 0.25
             }
         }
         def gatlingDataDir = extension.gatlingDataDir
@@ -37,6 +38,7 @@ class GatlingPluginExtensionSpec extends Specification {
         assert extension.metrics.graphiteUrl == 'http://locahost'
         assert extension.metrics.metricPrefix == 'foo'
         assert extension.metrics.daysToCheck == 5
+        assert extension.metrics.degradationTolerance == 0.25
         assert gatlingDataDir != null
         assert gatlingReportsDir != null
         assert gatlingBodiesDir != null
@@ -57,6 +59,7 @@ class GatlingPluginExtensionSpec extends Specification {
         def gatlingReportsDir = extension.gatlingReportsDir
         def gatlingBodiesDir = extension.gatlingBodiesDir
         def gatlingConfFile = extension.gatlingConfFile
+        def metricsDegradationTolerance = extension.metrics.degradationTolerance
 
         then:
         assert extension.checkForKOs != null
@@ -68,6 +71,7 @@ class GatlingPluginExtensionSpec extends Specification {
         assert gatlingReportsDir != null
         assert gatlingBodiesDir != null
         assert gatlingConfFile != null
+        assert metricsDegradationTolerance != null
         4 * project.file(_) >> new File(_ as String)
     }
 }

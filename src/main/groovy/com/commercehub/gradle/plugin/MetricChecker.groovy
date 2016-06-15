@@ -10,28 +10,10 @@ import java.text.SimpleDateFormat
 class MetricChecker {
     private static final String GATLING_PREFIX = "gatling."
 
-    /**
-     * Return JSON from the given URL
-     *
-     * @param url the url to go to
-     * @return JSON from url
-     */
-    static getJsonFromUrl(String url) {
+    private static getJsonFromUrl(String url) {
         URL apiUrl = new URL(url)
 
         return new JsonSlurper().parse(apiUrl)
-    }
-
-    /**
-     * Detect any failed assertions ("KOs") from the current test run
-     *
-     * @param fromDate start time
-     * @param untilDate end time
-     */
-    static void detectFailedRequestQualityGate(int koThreshold) {
-        File gatlingLogFile = new File('build/gatling.log')
-
-        new KoChecker().checkForKos(koThreshold, gatlingLogFile)
     }
 
     /**
@@ -44,7 +26,7 @@ class MetricChecker {
      * @param numberOfDays the number of days to go back
      */
     static void checkPreviousDays(String baseUrl, String graphitePrefix, String scenario,
-                                  String metricName, int numberOfDays) {
+                                  String metricName, int numberOfDays, Number degradationTolerance) {
         final long DAYS_IN_MS = numberOfDays * 1000 * 60 * 60 * 24
         final Date START_DATE = new Date(System.currentTimeMillis() - DAYS_IN_MS).clearTime()
 
@@ -77,12 +59,12 @@ class MetricChecker {
                 def averageResponseTime = AverageCalculator.calculateAverageResponseTime(meanTimes)
 
                 // Calculate maximum acceptable response time
-                def acceptanceThreshold = averageResponseTime * 1.5
+                def acceptanceThreshold = averageResponseTime * (1.0 + degradationTolerance)
 
                 if (currentResponseTime > acceptanceThreshold) {
                     throw new GatlingGradlePluginException(
-                            "Current response time ${currentResponseTime} is greater than maximum " +
-                                    "acceptable value ${acceptanceThreshold} for ${metricName}.\n")
+                            "Current response time ${currentResponseTime} exceeds the tolerance for performance " +
+                                    "degradation (${degradationTolerance}) for ${metricName}.\n")
                 }
             }
         }
@@ -98,7 +80,7 @@ class MetricChecker {
             stringBuilder.append(".")
         }
 
-        stringBuilder.append(scenario)
+        stringBuilder.append(scenario.toLowerCase())
         stringBuilder.append(".")
         stringBuilder.append(metricName)
         stringBuilder.append(".all.mean")

@@ -6,12 +6,10 @@ import org.gradle.api.Project
  * Created by bmanley on 11/9/15.
  */
 class GatlingPluginExtension {
-    public static final String DEFAULT_GATLING_VERSION = '2.2.0-M3'
     public static final boolean DEFAULT_CHECK_FOR_KOS = true
     public static final int DEFAULT_KO_THRESHOLD = 0
-    public static final int DEFAULT_DAYS_TO_CHECK = 0
     public static final String DEFAULT_GATLING_DATA_DIR = 'data'
-    public static final String DEFAULT_GATLING_REPORTS_DIR = 'reports'
+    public static final String DEFAULT_GATLING_REPORTS_DIR = 'build/reports'
     public static final String DEFAULT_GATLING_BODIES_DIR = 'user-files/request-bodies'
     public static final boolean DEFAULT_FAIL_BUILD = true
     public static final String DEFAULT_GATLING_CONF_FILE = 'config/gatling.conf'
