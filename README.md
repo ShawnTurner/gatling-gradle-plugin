@@ -18,13 +18,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
         }
 
         dependencies {
-            classpath 'com.commercehub:gatling-gradle-plugin:1.0.+'
-        }
-
-        configurations.all {
-            // check for updates every build
-            resolutionStrategy.cacheDynamicVersionsFor 0, 'seconds'
-            resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+            classpath 'com.commercehub:gatling-gradle-plugin:2.0'
         }
 
     }
