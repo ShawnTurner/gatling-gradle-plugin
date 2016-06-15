@@ -80,6 +80,7 @@ level to provide global defaults.
 
 * `sourceSet` : Project source set containing gatling simulation to run. Defaults to project.sourceSets.test.
 * `gatlingSimulation` : The list of scenarios to run.
+* `failBuild` : Sets whether or not a failed load test should fail/stop the build. Defaults to true.
 * `checkForKOs` : Set whether or not to check for KOed requests. Defaults to true.
 * `koThreshold` : Number of KOs that will be allowed before the build is considered failed. Defaults to 0.
 * `gatlingDataDir` : The directory containing gatling data files. Defaults to $projectRoot/data.
