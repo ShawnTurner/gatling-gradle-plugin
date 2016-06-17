@@ -6,6 +6,13 @@ import org.gradle.api.Project
  * Created by bmanley on 11/9/15.
  */
 class GatlingPluginExtension {
+    public static final boolean DEFAULT_CHECK_FOR_KOS = true
+    public static final int DEFAULT_KO_THRESHOLD = 0
+    public static final String DEFAULT_GATLING_DATA_DIR = 'data'
+    public static final String DEFAULT_GATLING_REPORTS_DIR = 'build/reports'
+    public static final String DEFAULT_GATLING_BODIES_DIR = 'user-files/request-bodies'
+    public static final boolean DEFAULT_FAIL_BUILD = true
+    public static final String DEFAULT_GATLING_CONF_FILE = 'config/gatling.conf'
 
     private final Project project
 
@@ -13,63 +20,76 @@ class GatlingPluginExtension {
         this.project = project
     }
 
-    /**
-     * Set gatling version
-     */
-    String gatlingVersion = '2.2.0-M3'
+    def gatling(Closure closure) {
+        closure.setDelegate this
+        closure.call()
+    }
 
     /**
      * Set whether or not the gatling task will check for KOed requests
      */
-    boolean checkForKOs = true
+    Boolean checkForKOs
+
+    boolean getCheckForKOs() {
+        checkForKOs ?: DEFAULT_CHECK_FOR_KOS
+    }
 
     /**
      * The number of KOs allowed before a build is considered failed
      */
-    int koThreshold = 0
+    int koThreshold
 
-    /**
-     * Set number of days to go back when checking stats of previous builds
-     */
-    int numberOfDaysToCheck = 0
-
-    /**
-     * The base graphite url
-     */
-    String graphiteUrl = ""
+    int getKoThreshold() {
+        koThreshold ?: DEFAULT_KO_THRESHOLD
+    }
 
     /**
      * Set Gatling data directory
      */
-    String gatlingDataFolder = "${project.rootDir.absolutePath}/data"
+    def gatlingDataDir
+
+    File getGatlingDataDir() {
+        project.file (gatlingDataDir ?: DEFAULT_GATLING_DATA_DIR)
+    }
 
     /**
      * Set Gatling reports directory
      */
-    String gatlingReportsFolder = "${project.buildDir.absolutePath}/reports"
+    def gatlingReportsDir
+
+    File getGatlingReportsDir() {
+        project.file (gatlingReportsDir ?: DEFAULT_GATLING_REPORTS_DIR)
+    }
 
     /**
      * Set Gatling bodies directory
      */
-    String gatlingBodiesFolder = "${project.rootDir.absolutePath}/bodies"
+    def gatlingBodiesDir
 
-    /**
-     * Set Gatling simulations to run
-     */
-    def gatlingSimulation = []
+    File getGatlingBodiesDir() {
+        project.file (gatlingBodiesDir ?: DEFAULT_GATLING_BODIES_DIR)
+    }
 
-    /**
-     * Set Graphite metrics to check
-     */
-    def metricsToCheck = []
+    Boolean failBuild
+
+    boolean getFailBuild() {
+        (failBuild != null) ? failBuild : DEFAULT_FAIL_BUILD
+    }
 
     /**
      * Set Gatling conf file location
      */
-    String gatlingConfFile = "${project.rootDir.absolutePath}/resources/gatling.conf"
+    def gatlingConfFile
 
-    /**
-     * Set the the prefix for the published graphite metrics
-     */
-    String graphiteMetricPrefix = null
+    File getGatlingConfFile() {
+        project.file (gatlingConfFile ?: DEFAULT_GATLING_CONF_FILE)
+    }
+
+    GatlingMetricsConfig metrics = new GatlingMetricsConfig()
+
+    @SuppressWarnings('ConfusingMethodName')
+    def metrics(Closure closure) {
+        closure.setDelegate this.metrics
+        closure.call()
+    }
 }

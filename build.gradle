@@ -1,44 +1,35 @@
-apply from: file("$rootDir/gradle/jacoco.gradle")
-apply plugin: 'groovy'
+plugins {
+    id 'groovy'
+    id 'codenarc'
+    id 'net.saliman.cobertura' version '2.3.1'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.researchgate.release' version '2.1.2'
+    id "com.jfrog.bintray" version "1.2"
+}
 
-group = 'com.commercehub'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     compile gradleApi()
+
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.4'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'com.netflix.nebula:nebula-test:3.1.0'
 }
 
-jar {
-    manifest {
-        if (version != null) {
-            attributes 'implementation-Title': 'Gradle',
-                    'Implementation-Version': version
-        }
-        [
-                "BUILD_ID"     : "Build-Id",
-                "BUILD_NUMBER" : "Build-Number",
-                "HG_COMMIT"    : "HG-Commit",
-                "HG_BRANCH"    : "HG-Branch",
-                "APP_VERSION"  : "App-Version",
-                "KICKED_OFF_BY": "Kicked-Off-By",
-        ].each { envVar, attrName ->
-            def envVal = System.getProperty(envVar)
-            if (envVal) {
-                attributes([(attrName): envVal])
-            } else {
-                println("Couldn't locate a value for ${envVar}.")
-            }
-        }
-    }
+cobertura {
+    auxiliaryClasspath += files(configurations.compile.files)
 }
-
-apply plugin: 'codenarc'
 
 codenarc {
     toolVersion = '0.22'
+    reportFormat = System.properties['codeNarcOutput'] ?: 'html'
 }
 codenarcMain {
     configFile = rootProject.file('gradle/codenarc/codenarc.groovy')
@@ -46,3 +37,58 @@ codenarcMain {
 codenarcTest {
     configFile = rootProject.file('gradle/codenarc/codenarc.groovy')
 }
+
+test {
+    finalizedBy coberturaReport
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar {
+                classifier "sources"
+            }
+
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+
+            pom.withXml {
+                def Node root = asNode()
+            }
+        }
+    }
+}
+
+bintray {
+    user = project.hasProperty("bintrayUserName") ? bintrayUserName : null
+    key = project.hasProperty("bintrayApiKey") ? bintrayApiKey : null
+    publications = ["mavenJava"]
+    pkg {
+        repo = "main"
+        userOrg = "commercehub-oss"
+        name = 'gatling-gradle-plugin'
+        licenses = ["Apache-2.0"]
+        vcsUrl = 'https://github.com/commercehub-oss/gatling-gradle-plugin'
+    }
+}
+bintrayUpload.dependsOn build, sourcesJar, javadocJar
+createReleaseTag.dependsOn bintrayUpload

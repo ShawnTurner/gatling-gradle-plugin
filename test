@@ -1,0 +1,27 @@
+>>>>>>>>>>>>>>>>>>>>>>>>>>
+                Request:
+                Get by Partner Id: KO status.find.is(200), but actually found 404
+                =========================
+                Session:
+                Session(Get Result for Partner,53445937929107898-161,Map(gatling.http.cache.dns ->
+                =========================
+                HTTP request:
+                GET http://my.cool.url
+                headers=
+                Connection: keep-alive
+                Host: host.name
+                Authorization: Basic c2Ffd2FyZWhvdXNld2ViX29wZW46QGNjZXNzMkFsbA==
+                Accept: */*
+                realm=Realm{principal='username', password='password', scheme=BASIC,
+                =========================
+                HTTP response:
+                status=
+                404 Not Found
+                headers=
+                Date: [Mon, 07 Mar 2016 16:33:26 GMT]
+                Content-Type: [application/json]
+                Content-Length: [121]
+
+                body=
+                {"type":"NotFoundException","message":"Partner not found or linked to org: aero","causedBy":[],"constraintViolations":[]}
+                <<<<<<<<<<<<<<<<<<<<<<<<<
