@@ -3,6 +3,14 @@
 The gatling gradle plugin provides the ability to run gatling scenarios directly from a gradle build. The plugin utilizes
 the gatling cli provided by [gatling](http://gatling.io/docs/2.0.0-RC2/general/configuration.html#command-line-options).
 
+## 2.0 Release
+
+*June 20, 2016*
+
+Version 2.0 of this plugin is now available. This version is a major upgrade and is not compatible with configurations for the 1.x plugin versions. This upgrade deliveres the following features:
+* The ability to configure multiple simulations per gradle project.
+* Ability to set degradation tolerances for comparison of metrics in graphite.
+* Ability to pass JVM properties per task definition.
 
 ## Using the Plugin
 
