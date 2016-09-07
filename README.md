@@ -68,6 +68,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
             metricsToCheck = ['myapp:pageresponsetime']
             daysToCheck = 5
             degradationTolerance = 0.50
+            thresholdsByMetricIndex = [100]
         }
         jvmOptions {
             minHeapSize = "1024m"
