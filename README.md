@@ -12,6 +12,11 @@ Version 2.0 of this plugin is now available. This version is a major upgrade and
 * Ability to set degradation tolerances for comparison of metrics in graphite.
 * Ability to pass JVM properties per task definition.
 
+*September 7, 2016*
+
+Version 2.1 of this plugin is now available. This version is a minor upgrade and should not effect current configurations for the 2.x plugin versions. This upgrade deliveres the following features:
+* The ability to set minimum average time thresholds for individual metrics
+
 ## Using the Plugin
 
 The following gradle configuration will execute the gatling scenarios "MyAwesomeSimulation" and "MyCoolSimulation" using bodies
@@ -68,6 +73,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
             metricsToCheck = ['myapp:pageresponsetime']
             daysToCheck = 5
             degradationTolerance = 0.50
+            thresholdsByMetricIndex = [100]
         }
         jvmOptions {
             minHeapSize = "1024m"
@@ -104,9 +110,9 @@ level to provide global defaults.
 * `graphiteMetricPrefix` : prefix to add to the graphite metric.
 * `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with.
  `gatling.<graphiteMetricPrefix>.<gatlingSimulation(lowercase)>`.
-* `thresholdsByMetricIndex` : The list of timing thresholds(in ms) that you don't want your average test times exceed.
- Must be a positive integer. Must have one threshold per 'metricsToCheck' or exclude from configuration to bypass tests.
- The index of the threshold number correlates to the index of the metric in 'metricsToCheck' that it belongs to.
+* `thresholdsByMetricIndex` : The list of timing thresholds(in ms) that you don't want your average metric times to exceed.
+ Must be a positive integer. Must have one threshold per `metricsToCheck` or exclude from configuration to bypass tests.
+ The index of the threshold number correlates to the index of the metric in `metricsToCheck` that it belongs to.
 * `numberOfDaysToCheck` : Number of previous days to compare the current run to. If this value is 0, no check will occur.
  Must be a positive integer. Defaults to 0.
 * `degradationTolerance` : Percentage threshold for which the current average response times for a metric cannot exceed
