@@ -27,7 +27,7 @@ class MetricChecker {
      */
     static void checkPreviousDays(String baseUrl, String graphitePrefix, String scenario,
                                   String metricName, int numberOfDays, Number degradationTolerance) {
-        final long DAYS_IN_MS = 1000 * 60 * 60 * 24
+        final long DAYS_IN_MS = numberOfDays * 1000 * 60 * 60 * 24
         final Date START_DATE = new Date(System.currentTimeMillis() - DAYS_IN_MS).clearTime()
 
         String apiPrefix = '/render/?target='
