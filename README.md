@@ -104,7 +104,7 @@ level to provide global defaults.
 * `graphiteMetricPrefix` : prefix to add to the graphite metric.
 * `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with.
  `gatling.<graphiteMetricPrefix>.<gatlingSimulation(lowercase)>`.
-* `thresholdsByMetricIndex` : The list of timing thresholds(in ms) that you don't want your average test times to exceed.
+* `thresholdsByMetricIndex` : The list of timing thresholds(in ms) that you don't want your average metric times to exceed.
  Must be a positive integer. Must have one threshold per `metricsToCheck` or exclude from configuration to bypass tests.
  The index of the threshold number correlates to the index of the metric in `metricsToCheck` that it belongs to.
 * `numberOfDaysToCheck` : Number of previous days to compare the current run to. If this value is 0, no check will occur.
