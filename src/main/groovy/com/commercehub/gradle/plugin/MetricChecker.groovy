@@ -71,17 +71,17 @@ class MetricChecker {
     }
 
     /**
-     * Verify that the current mean response time for the given metric is not over a given minimum threshold
+     * Verify that the current mean response time for the given metric is not over a given maximum threshold
      * specfied by the test.
      *
      * @param baseUrl base graphite url
      * @param scenario the scenario to check
      * @param metricName the metric to check (case sensitive with underscores instead of spaces ie 'Get_by_Organization_id')
-     * @param minimumPerformanceThreshold the minimum amount of time(ms) you expect this test to run
+     * @param maximumPerformanceThreshold the maximum amount of time(ms) you expect this test to run
      */
 
-    static void checkMinimumThresholdTolerance(String baseUrl, String graphitePrefix, String scenario,
-                                               String metricName, Number minimumPerformanceThreshold) {
+    static void checkMaximumThresholdTolerance(String baseUrl, String graphitePrefix, String scenario,
+                                               String metricName, Number maximumPerformanceThreshold) {
         String apiPrefix = '/render/?target='
         String metric = buildMetricPath(graphitePrefix, scenario, metricName)
         String format = "&format=json"
@@ -102,10 +102,10 @@ class MetricChecker {
 
                 // Get the most recent response time
                 def currentResponseTime = meanTimes.last()
-                if (currentResponseTime > minimumPerformanceThreshold) {
+                if (currentResponseTime > maximumPerformanceThreshold) {
                     throw new GatlingGradlePluginException(
                             "Current response time ${currentResponseTime} exceeds the tolerance for minimum " +
-                                    "performance threshold (${minimumPerformanceThreshold}) for ${metricName}.\n")
+                                    "performance threshold (${maximumPerformanceThreshold}) for ${metricName}.\n")
                 }
             }
         }

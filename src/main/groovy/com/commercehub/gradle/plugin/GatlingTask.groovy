@@ -131,7 +131,7 @@ class GatlingTask extends DefaultTask {
             }
             if (hasThresholds) {
                 try {
-                    MetricChecker.checkMinimumThresholdTolerance(metrics.graphiteUrl, metrics.metricPrefix, gatlingSimulation,
+                    MetricChecker.checkMaximumThresholdTolerance(metrics.graphiteUrl, metrics.metricPrefix, gatlingSimulation,
                             metricName, metrics.thresholdsByMetricIndex[metricIndex])
                 } catch (GatlingGradlePluginException e) {
                     handleFailure("FAILED Metric Check ($metricName)", e)
