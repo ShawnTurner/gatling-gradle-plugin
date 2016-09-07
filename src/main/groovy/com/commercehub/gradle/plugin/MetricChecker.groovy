@@ -27,7 +27,7 @@ class MetricChecker {
      */
     static void checkPreviousDays(String baseUrl, String graphitePrefix, String scenario,
                                   String metricName, int numberOfDays, Number degradationTolerance) {
-        final long DAYS_IN_MS = numberOfDays * 1000 * 60 * 60 * 24
+        final long DAYS_IN_MS = 1000 * 60 * 60 * 24
         final Date START_DATE = new Date(System.currentTimeMillis() - DAYS_IN_MS).clearTime()
 
         String apiPrefix = '/render/?target='
@@ -65,6 +65,47 @@ class MetricChecker {
                     throw new GatlingGradlePluginException(
                             "Current response time ${currentResponseTime} exceeds the tolerance for performance " +
                                     "degradation (${degradationTolerance}) for ${metricName}.\n")
+                }
+            }
+        }
+    }
+
+    /**
+     * Verify that the current mean response time for the given metric is not over a given minimum threshold
+     * specfied by the test.
+     *
+     * @param baseUrl base graphite url
+     * @param scenario the scenario to check
+     * @param metricName the metric to check (case sensitive with underscores instead of spaces ie 'Get_by_Organization_id')
+     * @param minimumPerformanceThreshold the minimum amount of time(ms) you expect this test to run
+     */
+
+    static void checkMinimumThresholdTolerance(String baseUrl, String graphitePrefix, String scenario,
+                                               String metricName, Number minimumPerformanceThreshold) {
+        String apiPrefix = '/render/?target='
+        String metric = buildMetricPath(graphitePrefix, scenario, metricName)
+        String format = "&format=json"
+        String from = "&from=today"
+
+        // Get json from Graphite API
+        String apiString = baseUrl + apiPrefix + metric + format + from
+        def json = getJsonFromUrl(apiString)
+        if (json.size > 0) {
+
+            // Get list of datapoints
+            def datapoints = json.datapoints.get(0)
+
+            // Filter nulls
+            def meanTimes = filterNulls(datapoints)
+
+            if (meanTimes.size() > 0) {
+
+                // Get the most recent response time
+                def currentResponseTime = meanTimes.last()
+                if (currentResponseTime > minimumPerformanceThreshold) {
+                    throw new GatlingGradlePluginException(
+                            "Current response time ${currentResponseTime} exceeds the tolerance for minimum " +
+                                    "performance threshold (${minimumPerformanceThreshold}) for ${metricName}.\n")
                 }
             }
         }

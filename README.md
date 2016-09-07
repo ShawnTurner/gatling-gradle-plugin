@@ -50,17 +50,17 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
 
 
     apply plugin: 'gatling'
-    
+
     gatling {
         checkForKOs = true
         koThreshold = 0
-    
+
         metrics {
             graphiteUrl = "http://my.graphite.server.com"
             metricPrefix = 'my-namespace'
         }
     }
-    
+
     import com.commercehub.gradle.plugin.GatlingTask
     task loadTest(type: GatlingTask, dependsOn: ['testClasses']) {
         gatlingSimulation = 'MyGatlingTest'
@@ -102,8 +102,11 @@ level to provide global defaults.
 
 * `graphiteUrl` : The graphite base url.
 * `graphiteMetricPrefix` : prefix to add to the graphite metric.
-* `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with. 
+* `metricsToCheck` : The list of graphite metrics to check. Metrics in this list will be pre-pended with.
  `gatling.<graphiteMetricPrefix>.<gatlingSimulation(lowercase)>`.
+* `thresholdsByMetricIndex` : The list of timing thresholds(in ms) that you don't want your average test times exceed.
+ Must be a positive integer. Must have one threshold per 'metricsToCheck' or exclude from configuration to bypass tests.
+ The index of the threshold number correlates to the index of the metric in 'metricsToCheck' that it belongs to.
 * `numberOfDaysToCheck` : Number of previous days to compare the current run to. If this value is 0, no check will occur.
  Must be a positive integer. Defaults to 0.
 * `degradationTolerance` : Percentage threshold for which the current average response times for a metric cannot exceed

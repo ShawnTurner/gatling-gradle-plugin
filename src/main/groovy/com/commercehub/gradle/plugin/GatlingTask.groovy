@@ -112,15 +112,33 @@ class GatlingTask extends DefaultTask {
     }
 
     private void checkMetrics() {
+        def metricIndex = 0;
+        def hasThresholds = (metrics.thresholdsByMetricIndex != null);
+        if (hasThresholds && (metrics.thresholdsByMetricIndex.size() != metrics.metricsToCheck.size())) {
+            GatlingGradlePluginException error = new GatlingGradlePluginException("Number of Metrics to check" +
+                "(${metrics.metricsToCheck.size()}) is not equivalent to number of thresholds to check " +
+                "(${metrics.thresholdsByMetricIndex.size()}).");
+            handleFailure("FAILED Pre Metric Check", error);
+        }
+
         metrics.metricsToCheck.each { metricName ->
             project.logger.debug("Checking metric '${metricName.toString()}'.")
-
             try {
                 MetricChecker.checkPreviousDays(metrics.graphiteUrl, metrics.metricPrefix, gatlingSimulation,
                         metricName, metrics.daysToCheck, metrics.degradationTolerance)
             } catch (GatlingGradlePluginException e) {
                 handleFailure("FAILED Metric Check ($metricName)", e)
             }
+            if (hasThresholds) {
+                try {
+                    MetricChecker.checkMinimumThresholdTolerance(metrics.graphiteUrl, metrics.metricPrefix, gatlingSimulation,
+                            metricName, metrics.thresholdsByMetricIndex[metricIndex])
+                } catch (GatlingGradlePluginException e) {
+                    handleFailure("FAILED Metric Check ($metricName)", e)
+                }
+            }
+
+            metricIndex = metricIndex + 1;
         }
     }
 
@@ -167,5 +185,7 @@ class GatlingTask extends DefaultTask {
         Number getDegradationTolerance() {
             degradationTolerance ?: extension.metrics.degradationTolerance
         }
+
+        def thresholdsByMetricIndex = []
     }
 }
