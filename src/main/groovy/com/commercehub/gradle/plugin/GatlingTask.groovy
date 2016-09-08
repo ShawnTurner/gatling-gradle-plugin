@@ -112,13 +112,13 @@ class GatlingTask extends DefaultTask {
     }
 
     private void checkMetrics() {
-        def metricIndex = 0;
-        def hasThresholds = (metrics.thresholdsByMetricIndex != null);
+        def metricIndex = 0
+        def hasThresholds = (metrics.thresholdsByMetricIndex != null)
         if (hasThresholds && (metrics.thresholdsByMetricIndex.size() != metrics.metricsToCheck.size())) {
             GatlingGradlePluginException error = new GatlingGradlePluginException("Number of Metrics to check" +
                 "(${metrics.metricsToCheck.size()}) is not equivalent to number of thresholds to check " +
-                "(${metrics.thresholdsByMetricIndex.size()}).");
-            handleFailure("FAILED Pre Metric Check", error);
+                "(${metrics.thresholdsByMetricIndex.size()}).")
+            handleFailure("FAILED Pre Metric Check", error)
         }
 
         metrics.metricsToCheck.each { metricName ->
@@ -138,7 +138,7 @@ class GatlingTask extends DefaultTask {
                 }
             }
 
-            metricIndex = metricIndex + 1;
+            metricIndex = metricIndex + 1
         }
     }
 
