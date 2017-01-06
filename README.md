@@ -17,6 +17,9 @@ Version 2.0 of this plugin is now available. This version is a major upgrade and
 Version 2.1 of this plugin is now available. This version is a minor upgrade and should not effect current configurations for the 2.x plugin versions. This upgrade deliveres the following features:
 * The ability to set minimum average time thresholds for individual metrics
 
+### Compatibility
+The gatling gradle plugin has been verified to work with version 2.2.3 of gatling and gradle 3.3.
+
 ## Using the Plugin
 
 The following gradle configuration will execute the gatling scenarios "MyAwesomeSimulation" and "MyCoolSimulation" using bodies
@@ -42,7 +45,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
 
     ext {
         SCALA_VERSION = "2.11.7"
-        GATLING_VERSION = "2.2.0-M3"
+        GATLING_VERSION = "2.2.3"
     }
 
     dependencies {
