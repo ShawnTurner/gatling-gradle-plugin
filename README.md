@@ -18,9 +18,10 @@ Version 2.1 of this plugin is now available. This version is a minor upgrade and
 * The ability to set minimum average time thresholds for individual metrics
 
 ### Compatibility
-The gatling gradle plugin has been verified to work with version 2.2.3 of gatling and gradle 3.3.
+The gatling gradle plugin currently supports Java 8. The plugin requires gradle version 2.0 or later and gatling 2.1 or later. The most recently verified version of gradle is 3.3 and the most recently verified version of gatling is 2.2.3.
 
 ## Using the Plugin
+[ ![Download](https://api.bintray.com/packages/commercehub-oss/main/gatling-gradle-plugin/images/download.svg) ](https://bintray.com/commercehub-oss/main/gatling-gradle-plugin/_latestVersion)
 
 The following gradle configuration will execute the gatling scenarios "MyAwesomeSimulation" and "MyCoolSimulation" using bodies
 in the "bodies" directory, data in the "data" directory, and the configuration file "resources/gatling.conf". Reports will
