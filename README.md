@@ -3,6 +3,8 @@
 The gatling gradle plugin provides the ability to run gatling scenarios directly from a gradle build. The plugin utilizes
 the gatling cli provided by [gatling](http://gatling.io/docs/2.0.0-RC2/general/configuration.html#command-line-options).
 
+> See [our security policy](SECURITY.md) for handling of security-related matters.
+
 ## 2.0 Release
 
 *June 20, 2016*

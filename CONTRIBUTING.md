@@ -2,6 +2,8 @@
 
 > Before contributing, please read our [code of conduct](https://github.com/commercehub-oss/gatling-gradle-plugin/blob/master/CODE_OF_CONDUCT.md).
 
+> See [our security policy](SECURITY.md) for handling of security-related matters.
+
 # How to contribute
 The gatling gradle plugin was originally written for one of CommerceHub's product teams. Because of this, specific features
 were included during the plugin's initial development. If your project requires any feature(s) that aren't included feel free
