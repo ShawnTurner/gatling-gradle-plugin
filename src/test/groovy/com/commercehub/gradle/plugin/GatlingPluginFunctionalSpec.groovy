@@ -63,6 +63,6 @@ class GatlingPluginFunctionalSpec extends Specification {
 
         where:
         // gradle 2.8 is the earliest version that supports GradleRunner withPluginClasspath()
-        gradleVersion << ['2.8', '3.1', '4.2', '5.2']
+        gradleVersion << ['2.8', '3.1', '4.2.1', '5.2.1']
     }
 }

@@ -5,6 +5,12 @@ the gatling cli provided by [gatling](http://gatling.io/docs/2.0.0-RC2/general/c
 
 > See [our security policy](SECURITY.md) for handling of security-related matters.
 
+## 3.0
+This version is a substantial update with support for newer versions of Gradle.
+
+* gatling gradle plugin now supports up to Gradle 5.2.1
+
+
 ## 2.0 Release
 
 *June 20, 2016*
