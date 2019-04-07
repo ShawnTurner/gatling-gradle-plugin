@@ -6,6 +6,7 @@ plugins {
     id 'maven-publish'
     id 'net.researchgate.release' version '2.6.0'
     id "com.jfrog.bintray" version "1.2"
+    id 'java-gradle-plugin'
 }
 
 sourceCompatibility = 1.8
@@ -15,9 +16,9 @@ repositories {
     jcenter()
 }
 
-dependencies {
-    compile gradleApi()
 
+dependencies {
+    testImplementation gradleTestKit()
     testCompile 'org.codehaus.groovy:groovy-all:2.5.4'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
     testCompile 'com.netflix.nebula:nebula-test:3.1.0'

@@ -292,7 +292,7 @@ ruleset {
     // FactoryMethodName // dcarr dislikes this rule
     FieldName
     InterfaceName
-    MethodName
+    // MethodName // sturner dislikes this rule
     ObjectOverrideMisspelledMethodName
     PackageName
     ParameterName
