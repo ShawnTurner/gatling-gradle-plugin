@@ -7,12 +7,35 @@ import spock.lang.Unroll
 import org.gradle.testkit.runner.GradleRunner
 import static org.gradle.testkit.runner.TaskOutcome.*
 
+@Unroll
 class GatlingPluginFunctionalSpec extends Specification {
     @Rule final TemporaryFolder testProjectDir = new TemporaryFolder()
     File buildFile
+    File gatlingScenario
 
     def setup() {
         buildFile = testProjectDir.newFile('build.gradle')
+        def gatlingTestFolder = testProjectDir.newFolder('src' ,'test', 'scala')
+        gatlingScenario = new File(gatlingTestFolder, "TestSimulation.scala")
+        gatlingScenario << """
+            import io.gatling.core.Predef._
+            import io.gatling.http.Predef._
+            import scala.concurrent.duration._
+            
+            class TestSimulation extends Simulation { 
+              val httpProtocol = http
+                .baseURL("http://${UUID.randomUUID()}")
+                .acceptLanguageHeader("en-US,en;q=0.5")
+                .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
+               
+              val scn = scenario("TestSimulation")
+                .exec(http("testsim").get("/"))
+            
+              setUp(
+                scn.inject(atOnceUsers(1))
+              ).protocols(httpProtocol)
+            }
+        """
     }
 
     @Unroll
@@ -39,12 +62,11 @@ class GatlingPluginFunctionalSpec extends Specification {
                 testCompile "io.gatling:gatling-core:\${GATLING_VERSION}"
                 testCompile "io.gatling.highcharts:gatling-charts-highcharts:\${GATLING_VERSION}"
                 testCompile "io.gatling:gatling-app:\${GATLING_VERSION}"
-                testCompile this.project.sourceSets.test.output
             }
             
             import com.commercehub.gradle.plugin.GatlingTask
-            task loadTest(type: GatlingTask) {
-               gatlingSimulation = 'Simulation'
+            task loadTest(type: GatlingTask, dependsOn: 'compileTestScala') {
+               gatlingSimulation = 'TestSimulation'
             }
         """
 
@@ -58,7 +80,6 @@ class GatlingPluginFunctionalSpec extends Specification {
                 .build()
 
         then:
-        //result.output.contains('Hello world!')
         result.task(":loadTest").outcome == SUCCESS
 
         where:

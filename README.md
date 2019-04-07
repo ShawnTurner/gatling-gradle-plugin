@@ -79,7 +79,7 @@ be stores in the "reports" directory. The plugin will also check for KOed reques
     }
 
     import com.commercehub.gradle.plugin.GatlingTask
-    task loadTest(type: GatlingTask, dependsOn: ['testClasses']) {
+    task loadTest(type: GatlingTask, dependsOn: ['compileTestScala']) {
         gatlingSimulation = 'MyGatlingTest'
         metrics {
             metricsToCheck = ['myapp:pageresponsetime']

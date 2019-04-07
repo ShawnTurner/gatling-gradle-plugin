@@ -100,23 +100,21 @@ class GatlingTask extends DefaultTask {
         def gatlingSimulation = this.gatlingSimulation
         def gatlingLogFile = new File(project.buildDir, 'gatling.log')
 
-        def execResult = project.javaexec {
+        project.javaexec {
             jvmOptions.copyTo(delegate)
             standardInput = System.in
             standardOutput = gatlingLogFile.exists() ? gatlingLogFile.newOutputStream() : System.out
             main = 'io.gatling.app.Gatling'
             classpath = gatlingRuntimeClasspath
 
-            jvmArgs "-Dgatling.core.directory.binaries=${sourceSet.output.hasProperty('classesDir') ? sourceSet.output.classesDir : sourceSet.output.classesDirs.asPath}",
+            jvmArgs "-Dgatling.core.directory.binaries=${sourceSet.output.hasProperty('classesDir') ? sourceSet.output.classesDir : sourceSet.output.classesDirs}",
                     '-Xss1m'
 
             args '-df', extension.gatlingDataDir
             args '-rf', extension.gatlingReportsDir
             args '-bdf', extension.gatlingBodiesDir
             args '-s', gatlingSimulation
-        }
-
-        execResult.assertNormalExitValue()
+        }.assertNormalExitValue()
 
         if (checkForKOs) {
             try {
