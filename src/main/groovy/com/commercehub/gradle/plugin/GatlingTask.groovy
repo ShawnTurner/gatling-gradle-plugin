@@ -99,14 +99,15 @@ class GatlingTask extends DefaultTask {
         def extension = this.extension
         def gatlingSimulation = this.gatlingSimulation
         def gatlingLogFile = new File(project.buildDir, 'gatling.log')
+
         project.javaexec {
             jvmOptions.copyTo(delegate)
             standardInput = System.in
-            standardOutput = gatlingLogFile.newOutputStream()
+            standardOutput = gatlingLogFile.exists() ? gatlingLogFile.newOutputStream() : System.out
             main = 'io.gatling.app.Gatling'
             classpath = gatlingRuntimeClasspath
 
-            jvmArgs "-Dgatling.core.directory.binaries=${sourceSet.output.classesDir}",
+            jvmArgs "-Dgatling.core.directory.binaries=${sourceSet.output.hasProperty('classesDir') ? sourceSet.output.classesDir : sourceSet.output.classesDirs}",
                     '-Xss1m'
 
             args '-df', extension.gatlingDataDir
