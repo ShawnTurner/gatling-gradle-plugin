@@ -15,7 +15,7 @@ class GatlingPluginFunctionalSpec extends Specification {
 
     def setup() {
         buildFile = testProjectDir.newFile('build.gradle')
-        def gatlingTestFolder = testProjectDir.newFolder('src' ,'test', 'scala')
+        def gatlingTestFolder = testProjectDir.newFolder('src', 'test', 'scala')
         gatlingScenario = new File(gatlingTestFolder, "TestSimulation.scala")
         gatlingScenario << """
             import io.gatling.core.Predef._
@@ -39,12 +39,13 @@ class GatlingPluginFunctionalSpec extends Specification {
     }
 
     @Unroll
+    @SuppressWarnings('GStringExpressionWithinString')
     def "can execute loadTest task with Gradle version #gradleVersion"() {
         given:
         buildFile << """
             plugins {
-                id 'scala'
-                id 'gatling'
+                id "scala"
+                id "gatling"
             }
             
             repositories {
@@ -65,8 +66,8 @@ class GatlingPluginFunctionalSpec extends Specification {
             }
             
             import com.commercehub.gradle.plugin.GatlingTask
-            task loadTest(type: GatlingTask, dependsOn: 'compileTestScala') {
-               gatlingSimulation = 'TestSimulation'
+            task loadTest(type: GatlingTask, dependsOn: "compileTestScala") {
+               gatlingSimulation = "TestSimulation"
             }
         """
 

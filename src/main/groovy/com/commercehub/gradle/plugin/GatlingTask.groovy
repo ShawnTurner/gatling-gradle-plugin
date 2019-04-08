@@ -100,21 +100,23 @@ class GatlingTask extends DefaultTask {
         def gatlingSimulation = this.gatlingSimulation
         def gatlingLogFile = new File(project.buildDir, 'gatling.log')
 
-        project.javaexec {
+        def execResult = project.javaexec {
             jvmOptions.copyTo(delegate)
             standardInput = System.in
             standardOutput = gatlingLogFile.exists() ? gatlingLogFile.newOutputStream() : System.out
             main = 'io.gatling.app.Gatling'
             classpath = gatlingRuntimeClasspath
 
-            jvmArgs "-Dgatling.core.directory.binaries=${sourceSet.output.hasProperty('classesDir') ? sourceSet.output.classesDir : sourceSet.output.classesDirs}",
+            jvmArgs "-Dgatling.core.directory.binaries=${getGatlingBin(this.getSourceSet())}",
                     '-Xss1m'
 
             args '-df', extension.gatlingDataDir
             args '-rf', extension.gatlingReportsDir
             args '-bdf', extension.gatlingBodiesDir
             args '-s', gatlingSimulation
-        }.assertNormalExitValue()
+        }
+
+        execResult.assertNormalExitValue()
 
         if (checkForKOs) {
             try {
@@ -123,6 +125,10 @@ class GatlingTask extends DefaultTask {
                 handleFailure("FAILED KO Check", e)
             }
         }
+    }
+
+    private static String getGatlingBin(SourceSet s) {
+        return s.output.hasProperty('classesDir') ? s.output.classesDir : s.output.classesDirs
     }
 
     private void checkMetrics() {
