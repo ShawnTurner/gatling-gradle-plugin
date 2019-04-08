@@ -18,6 +18,7 @@ package com.commercehub.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.JavaForkOptions
@@ -30,6 +31,7 @@ class GatlingTask extends DefaultTask {
     /**
      * Gatling simulations to run
      */
+    @Input
     String gatlingSimulation
 
     /**
@@ -37,6 +39,7 @@ class GatlingTask extends DefaultTask {
      */
     SourceSet sourceSet
 
+    @Input
     SourceSet getSourceSet() {
         sourceSet ?: project.sourceSets.test
     }
@@ -46,6 +49,7 @@ class GatlingTask extends DefaultTask {
      */
     Boolean checkForKOs
 
+    @Input
     boolean getCheckForKOs() {
         checkForKOs ?: extension.checkForKOs
     }
@@ -55,16 +59,19 @@ class GatlingTask extends DefaultTask {
      */
     int koThreshold
 
+    @Input
     int getKoThreshold() {
         koThreshold ?: extension.koThreshold
     }
 
     Boolean failBuild
 
+    @Input
     boolean getFailBuild() {
         (failBuild != null) ? failBuild : extension.failBuild
     }
 
+    @Input
     GatlingTaskMetricsConfig metrics = new GatlingTaskMetricsConfig(extension)
 
     @SuppressWarnings('ConfusingMethodName')
@@ -73,6 +80,7 @@ class GatlingTask extends DefaultTask {
         closure.call()
     }
 
+    @Input
     JavaForkOptions jvmOptions = new DefaultJavaForkOptions(project.fileResolver)
 
     @SuppressWarnings('ConfusingMethodName')
